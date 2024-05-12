@@ -1,6 +1,7 @@
 package com.vinifillos.tests.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,6 +9,7 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "planets")
 public class Planet {
 
