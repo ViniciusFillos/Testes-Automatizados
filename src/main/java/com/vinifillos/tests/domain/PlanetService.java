@@ -13,7 +13,6 @@ public class PlanetService {
 
     @Transactional
     public Planet create(Planet planet) {
-        planetRepository.save(planet);
-        return planet;
+        return planetRepository.save(planet);
     }
 }
