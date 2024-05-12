@@ -1,5 +1,6 @@
 package com.vinifillos.tests.domain;
 
+import aj.org.objectweb.asm.commons.Remapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,4 +23,9 @@ public class PlanetService {
     public Optional<Planet> getById(Long id) {
         return planetRepository.findById(id);
     }
+
+    public Optional<Planet> getByName(String name) {
+        return planetRepository.findByName(name);
+    }
+
 }
