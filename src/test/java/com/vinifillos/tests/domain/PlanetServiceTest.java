@@ -46,7 +46,7 @@ public class PlanetServiceTest {
     public void getPlanet_ByExistingId_ReturnsPlanet() {
         when(planetRepository.findById(anyLong())).thenReturn(Optional.of(PLANET_WITH_ID));
 
-        Optional<Planet> sut = planetService.getById(VALID_ID);
+        Optional<Planet> sut = planetService.getById(PLANET_WITH_ID.getId());
 
         assertThat(sut).isNotEmpty();
         assertThat(sut.get()).isEqualTo(PLANET_WITH_ID);
@@ -54,9 +54,28 @@ public class PlanetServiceTest {
 
     @Test
     public void getPlanet_ByUnexistingId_ReturnsEmpity() {
-        when(planetRepository.findById(INVALID_ID)).thenReturn(Optional.empty());
+        when(planetRepository.findById(anyLong())).thenReturn(Optional.empty());
 
-        Optional<Planet> sut = planetService.getById(INVALID_ID);
+        Optional<Planet> sut = planetService.getById(0L);
+
+        assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet() {
+        when(planetRepository.findByName(PLANET.getName())).thenReturn(Optional.of(PLANET));
+
+        Optional<Planet> sut = planetService.getByName(PLANET.getName());
+
+        assertThat(sut).isNotEmpty();
+        assertThat(sut.get()).isEqualTo(PLANET);
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingName_ReturnsEmpity() {
+        when(planetRepository.findByName("INVALID_NAME")).thenReturn(Optional.empty());
+
+        Optional<Planet> sut = planetService.getByName("INVALID_NAME");
 
         assertThat(sut).isEmpty();
     }
