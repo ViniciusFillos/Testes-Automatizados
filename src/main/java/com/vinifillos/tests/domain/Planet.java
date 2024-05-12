@@ -1,42 +1,67 @@
 package com.vinifillos.tests.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import org.apache.commons.lang3.builder.EqualsBuilder;
 
 @Entity
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "planets")
 public class Planet {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String name;
-    private String climate;
-    private String  terrain;
+  private String name;
+  private String climate;
+  private String terrain;
 
-    public Planet(String name, String climate, String terrain) {
-        this.name = name;
-        this.climate = climate;
-        this.terrain = terrain;
-    }
+  public Planet() {
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+  public Planet(String climate, String terrain) {
+    this.climate = climate;
+    this.terrain = terrain;
+  }
 
-        Planet planet = (Planet) o;
-        return id.equals(planet.id);
-    }
+  public Planet(String name, String climate, String terrain) {
+    this.name = name;
+    this.climate = climate;
+    this.terrain = terrain;
+  }
 
-    @Override
-    public int hashCode() {
-        return id.hashCode();
-    }
+  public Long getId() {
+    return id;
+  }
+
+  public void setId(Long id) {
+    this.id = id;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getClimate() {
+    return climate;
+  }
+
+  public void setClimate(String climate) {
+    this.climate = climate;
+  }
+
+  public String getTerrain() {
+    return terrain;
+  }
+
+  public void setTerrain(String terrain) {
+    this.terrain = terrain;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    return EqualsBuilder.reflectionEquals(obj, this);
+  }
 }

@@ -1,31 +1,37 @@
 package com.vinifillos.tests.domain;
 
-import aj.org.objectweb.asm.commons.Remapper;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.domain.Example;
+import org.springframework.stereotype.Service;
 
 @Service
 public class PlanetService {
-    private PlanetRepository planetRepository;
+  private PlanetRepository planetRepository;
 
-    public PlanetService(PlanetRepository planetRepository) {
-        this.planetRepository = planetRepository;
-    }
+  public PlanetService(PlanetRepository planetRepository) {
+    this.planetRepository = planetRepository;
+  }
 
-    @Transactional
-    public Planet create(Planet planet) {
-        return planetRepository.save(planet);
-    }
+  public Planet create(Planet planet) {
+    return planetRepository.save(planet);
+  }
 
-    @Transactional(readOnly = true)
-    public Optional<Planet> getById(Long id) {
-        return planetRepository.findById(id);
-    }
+  public Optional<Planet> get(Long id) {
+    return planetRepository.findById(id);
+  }
 
-    public Optional<Planet> getByName(String name) {
-        return planetRepository.findByName(name);
-    }
+  public Optional<Planet> getByName(String name) {
+    return planetRepository.findByName(name);
+  }
 
+  public List<Planet> list(String terrain, String climate) {
+    Example<Planet> query = QueryBuilder.makeQuery(new Planet(climate, terrain));
+    return planetRepository.findAll(query);
+  }
+
+  public void remove(Long id) {
+    planetRepository.deleteById(id);
+  }
 }
