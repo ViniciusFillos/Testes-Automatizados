@@ -1,5 +1,6 @@
 package com.vinifillos.tests.domain;
 
+import static com.vinifillos.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.junit.jupiter.api.Test;
@@ -7,11 +8,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static com.vinifillos.common.PlanetConstants.INVALID_PLANET;
-import static com.vinifillos.common.PlanetConstants.PLANET;
+import java.util.Optional;
+
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 
 //@SpringBootTest(classes = PlanetService.class)
@@ -40,5 +40,24 @@ public class PlanetServiceTest {
         when(planetRepository.save(INVALID_PLANET)).thenThrow(RuntimeException.class);
 
         assertThatThrownBy(() -> planetService.create(INVALID_PLANET)).isInstanceOf(RuntimeException.class);
+    }
+
+    @Test
+    public void getPlanet_ByExistingId_ReturnsPlanet() {
+        when(planetRepository.findById(anyLong())).thenReturn(Optional.of(PLANET_WITH_ID));
+
+        Optional<Planet> sut = planetService.getById(VALID_ID);
+
+        assertThat(sut).isNotEmpty();
+        assertThat(sut.get()).isEqualTo(PLANET_WITH_ID);
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingId_ReturnsEmpity() {
+        when(planetRepository.findById(INVALID_ID)).thenReturn(Optional.empty());
+
+        Optional<Planet> sut = planetService.getById(INVALID_ID);
+
+        assertThat(sut).isEmpty();
     }
 }
