@@ -1,8 +1,7 @@
 package com.vinifillos.tests.domain;
 
 import static com.vinifillos.common.PlanetConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,8 +14,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 //@SpringBootTest(classes = PlanetService.class)
@@ -109,5 +110,19 @@ public class PlanetServiceTest {
         List<Planet> sut = planetService.list(PLANET.getTerrain(), PLANET.getClimate());
 
         assertThat(sut).isEmpty();
+    }
+
+    @Test
+    public void deletePlanet_ByExistingId_DoesNotThrowAnyException() {
+        assertThatCode(() -> planetService.remove(1L)).doesNotThrowAnyException();
+
+    }
+
+    @Test
+    public void deletePlanet_ByUnexistingId_ThrowsException() {
+        doThrow(new RuntimeException()).when(planetRepository).deleteById(0L);
+
+        assertThatThrownBy(() -> planetService.remove(0L)).isInstanceOf(RuntimeException.class);
+
     }
 }
