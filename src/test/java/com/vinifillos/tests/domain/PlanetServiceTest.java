@@ -124,5 +124,6 @@ public class PlanetServiceTest {
 
         assertThatThrownBy(() -> planetService.remove(0L)).isInstanceOf(RuntimeException.class);
 
+
     }
 }
