@@ -1,9 +1,13 @@
 package com.vinifillos.tests.domain;
 
+import jakarta.persistence.PersistenceException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+
+import java.util.Optional;
 
 import static com.vinifillos.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,6 +20,11 @@ public class PlanetRepositoryTest {
 
     @Autowired
     private TestEntityManager testEntityManager;
+
+    @AfterEach
+    public void afterEach() {
+        PLANET.setId(null);
+    }
 
     @Test
     public void createPlanet_WithValidData_ReturnsPlanet() {
@@ -44,16 +53,15 @@ public class PlanetRepositoryTest {
     @Test
     public void getPlanet_ByExistingId_ReturnsPlanet() {
         Planet planet = testEntityManager.persistFlushFind(PLANET);
-        Planet sut = planetRepository.findById(PLANET.getId()).get();
+        Planet sut = planetRepository.findById(planet.getId()).get();
         assertThat(sut).isNotNull();
-        assertThat(sut.getName()).isEqualTo(planet.getName());
-        assertThat(sut.getClimate()).isEqualTo(planet.getClimate());
-        assertThat(sut.getTerrain()).isEqualTo(planet.getTerrain());
+        assertThat(sut).isEqualTo(planet);
     }
 
     @Test
     public void getPlanet_ByUnexistingId_ReturnsPlanet() {
-        assertThatThrownBy(() -> planetRepository.findById(INVALID_PLANET.getId())).isInstanceOf(RuntimeException.class);
+        Optional<Planet> planetOpt = planetRepository.findById(1L);
+        assertThat(planetOpt).isEmpty();
 
     }
 }
