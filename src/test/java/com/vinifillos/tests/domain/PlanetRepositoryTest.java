@@ -40,4 +40,20 @@ public class PlanetRepositoryTest {
         planet.setId(null);
         assertThatThrownBy(() -> planetRepository.save(planet)).isInstanceOf(RuntimeException.class);
     }
+
+    @Test
+    public void getPlanet_ByExistingId_ReturnsPlanet() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+        Planet sut = planetRepository.findById(PLANET.getId()).get();
+        assertThat(sut).isNotNull();
+        assertThat(sut.getName()).isEqualTo(planet.getName());
+        assertThat(sut.getClimate()).isEqualTo(planet.getClimate());
+        assertThat(sut.getTerrain()).isEqualTo(planet.getTerrain());
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingId_ReturnsPlanet() {
+        assertThatThrownBy(() -> planetRepository.findById(INVALID_PLANET.getId())).isInstanceOf(RuntimeException.class);
+
+    }
 }
