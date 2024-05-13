@@ -4,7 +4,9 @@ import java.util.List;
 
 import com.vinifillos.tests.domain.Planet;
 import com.vinifillos.tests.domain.PlanetService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +27,7 @@ public class PlanetController {
   private PlanetService planetService;
 
   @PostMapping
-  public ResponseEntity<Planet> create(@RequestBody Planet planet) {
+  public ResponseEntity<Planet> create(@RequestBody @Valid Planet planet) {
     Planet planetCreated = planetService.create(planet);
     return ResponseEntity.status(HttpStatus.CREATED).body(planetCreated);
   }
