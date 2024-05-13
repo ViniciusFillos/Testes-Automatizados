@@ -11,9 +11,13 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 import static com.vinifillos.common.PlanetConstants.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -41,7 +45,7 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void createPlant_WithInvalidData_ReturnsBadRequest() throws Exception {
+    public void createPlanet_WithInvalidData_ReturnsBadRequest() throws Exception {
         mockMvc.perform(
                         post("/planets")
                                 .content(objectMapper.writeValueAsString(EMPITY_PLANET))
@@ -55,12 +59,27 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void createPlant_WithExistingName_ReturnsConflict() throws Exception {
+    public void createPlanet_WithExistingName_ReturnsConflict() throws Exception {
         when(planetService.create(any())).thenThrow(DataIntegrityViolationException.class);
         mockMvc.perform(
                         post("/planets")
                                 .content(objectMapper.writeValueAsString(PLANET))
                                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
+    }
+
+    @Test
+    public void getPlanet_ByExistingId_ReturnsPlanet() throws Exception {
+        when(planetService.get(anyLong())).thenReturn(Optional.of(PLANET));
+        mockMvc.perform(get("/planets/1")
+                        .content(objectMapper.writeValueAsString(PLANET))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(PLANET));
+    }
+
+    @Test
+    public void getPlanet_ByUnexistingId_ReturnsNotFound() {
+
     }
 }
