@@ -115,7 +115,6 @@ public class PlanetServiceTest {
     @Test
     public void deletePlanet_ByExistingId_DoesNotThrowAnyException() {
         assertThatCode(() -> planetService.remove(1L)).doesNotThrowAnyException();
-
     }
 
     @Test
