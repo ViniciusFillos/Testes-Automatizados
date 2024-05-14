@@ -72,4 +72,10 @@ public class PlanetRepositoryTest {
         assertThat(sut).isNotNull();
         assertThat(sut).isEqualTo(planet);
     }
+
+    @Test
+    public void getPlanet_ByUnexistingname_ReturnsPlanet() {
+        Optional<Planet> planetOpt = planetRepository.findByName("");
+        assertThat(planetOpt).isEmpty();
+    }
 }
