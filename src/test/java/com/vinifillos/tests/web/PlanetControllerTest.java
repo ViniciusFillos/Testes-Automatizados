@@ -1,6 +1,7 @@
 package com.vinifillos.tests.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vinifillos.tests.domain.Planet;
 import com.vinifillos.tests.domain.PlanetService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static com.vinifillos.common.PlanetConstants.*;
@@ -22,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(PlanetController.class)
-public class PlanetControllerTest {
+class PlanetControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -44,7 +47,7 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void createPlanet_WithInvalidData_ReturnsBadRequest() throws Exception {
+    void createPlanet_WithInvalidData_ReturnsBadRequest() throws Exception {
         mockMvc.perform(
                         post("/planets")
                                 .content(objectMapper.writeValueAsString(EMPITY_PLANET))
@@ -58,7 +61,7 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void createPlanet_WithExistingName_ReturnsConflict() throws Exception {
+    void createPlanet_WithExistingName_ReturnsConflict() throws Exception {
         when(planetService.create(any())).thenThrow(DataIntegrityViolationException.class);
         mockMvc.perform(
                         post("/planets")
@@ -68,7 +71,7 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void getPlanet_ByExistingId_ReturnsPlanet() throws Exception {
+    void getPlanet_ByExistingId_ReturnsPlanet() throws Exception {
         when(planetService.get(anyLong())).thenReturn(Optional.of(PLANET));
         mockMvc.perform(get("/planets/1"))
                 .andExpect(status().isOk())
@@ -76,13 +79,13 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void getPlanet_ByUnexistingId_ReturnsNotFound() throws Exception {
+    void getPlanet_ByUnexistingId_ReturnsNotFound() throws Exception {
         mockMvc.perform(get("/planets/0"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    public void getPlanet_ByExistingName_ReturnsPlanet() throws Exception {
+    void getPlanet_ByExistingName_ReturnsPlanet() throws Exception {
         when(planetService.getByName(PLANET.getName())).thenReturn(Optional.of(PLANET));
         mockMvc.perform(get("/planets/name/name"))
                 .andExpect(status().isOk())
@@ -90,8 +93,22 @@ public class PlanetControllerTest {
     }
 
     @Test
-    public void getPlanet_ByUnexistingName_ReturnsPlanet() throws Exception {
+    void getPlanet_ByUnexistingName_ReturnsPlanet() throws Exception {
         mockMvc.perform(get("/planets/name/name"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void listPlanets_ReturnFilteredPlanets() throws Exception {
+        List<Planet> planets = new ArrayList<>() {
+            {
+                add(PLANET);
+            }
+        };
+        when(planetService.list(any(), any())).thenReturn(planets);
+        mockMvc.perform(get("/planets?climate=climate&terrain=terrain"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$.size()").value(1));
     }
 }
