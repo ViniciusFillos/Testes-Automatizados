@@ -99,7 +99,7 @@ class PlanetControllerTest {
     }
 
     @Test
-    void listPlanets_ReturnFilteredPlanets() throws Exception {
+    void listPlanets_ReturnsFilteredPlanets() throws Exception {
         List<Planet> planets = new ArrayList<>() {
             {
                 add(PLANET);
@@ -110,5 +110,15 @@ class PlanetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1))
                 .andExpect(jsonPath("$.size()").value(1));
+    }
+
+    @Test
+    void listPlanets_ReturnsNoPlanets() throws Exception {
+        List<Planet> planets = new ArrayList<>();
+        when(planetService.list(any(), any())).thenReturn(planets);
+        mockMvc.perform(get("/planets?climate=climate&terrain=terrain"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()").value(0))
+                .andExpect(jsonPath("$.size()").value(0));
     }
 }
