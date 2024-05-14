@@ -1,6 +1,5 @@
 package com.vinifillos.tests.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinifillos.tests.domain.PlanetService;
 import org.junit.jupiter.api.Test;
@@ -80,5 +79,13 @@ public class PlanetControllerTest {
     public void getPlanet_ByUnexistingId_ReturnsNotFound() throws Exception {
         mockMvc.perform(get("/planets/0"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getPlanet_ByExistingName_ReturnsPlanet() throws Exception {
+        when(planetService.getByName(PLANET.getName())).thenReturn(Optional.of(PLANET));
+        mockMvc.perform(get("/planets/name/name"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").value(PLANET));
     }
 }
