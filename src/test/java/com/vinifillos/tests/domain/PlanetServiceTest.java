@@ -1,4 +1,4 @@
-package com.vinifillos.domain;
+package com.vinifillos.tests.domain;
 
 import static com.vinifillos.common.PlanetConstants.*;
 

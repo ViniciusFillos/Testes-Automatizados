@@ -1,4 +1,4 @@
-package com.vinifillos.web;
+package com.vinifillos.tests.web;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinifillos.tests.domain.Planet;

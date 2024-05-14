@@ -1,4 +1,4 @@
-package com.vinifillos.domain;
+package com.vinifillos.tests.domain;
 
 import com.vinifillos.tests.domain.Planet;
 import com.vinifillos.tests.domain.PlanetRepository;
