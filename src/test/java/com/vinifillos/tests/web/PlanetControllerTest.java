@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.vinifillos.common.PlanetConstants.*;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
@@ -100,25 +101,24 @@ class PlanetControllerTest {
 
     @Test
     void listPlanets_ReturnsFilteredPlanets() throws Exception {
-        List<Planet> planets = new ArrayList<>() {
-            {
-                add(PLANET);
-            }
-        };
-        when(planetService.list(any(), any())).thenReturn(planets);
-        mockMvc.perform(get("/planets?climate=climate&terrain=terrain"))
+        when(planetService.list(null, null)).thenReturn(PLANETS);
+        when(planetService.list(TATOOINE.getTerrain(), TATOOINE.getClimate())).thenReturn(List.of(TATOOINE));
+        mockMvc.perform(get("/planets"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(1))
-                .andExpect(jsonPath("$.size()").value(1));
+                .andExpect(jsonPath("$", hasSize(3)));
+
+        mockMvc.perform(get("/planets?climate=arid&terrain=desert"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0]").value(TATOOINE));
     }
 
     @Test
     void listPlanets_ReturnsNoPlanets() throws Exception {
         List<Planet> planets = new ArrayList<>();
         when(planetService.list(any(), any())).thenReturn(planets);
-        mockMvc.perform(get("/planets?climate=climate&terrain=terrain"))
+        mockMvc.perform(get("/planets?=climate&terrain="))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(0))
-                .andExpect(jsonPath("$.size()").value(0));
+                .andExpect(jsonPath("$", hasSize(0)));
     }
 }
