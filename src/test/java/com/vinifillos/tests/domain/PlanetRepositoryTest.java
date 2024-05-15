@@ -1,8 +1,5 @@
 package com.vinifillos.tests.domain;
 
-import com.vinifillos.tests.domain.Planet;
-import com.vinifillos.tests.domain.PlanetRepository;
-import com.vinifillos.tests.domain.QueryBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +12,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.vinifillos.common.PlanetConstants.*;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.Mockito.doThrow;
 
 @DataJpaTest
 public class PlanetRepositoryTest {
@@ -106,6 +103,19 @@ public class PlanetRepositoryTest {
 
         List<Planet> response = planetRepository.findAll(query);
         assertThat(response).isEmpty();
+    }
 
+    @Test
+    void deletePlanet_ByExistingId_DoesNotThrowAnyException() {
+        Planet planet = testEntityManager.persistFlushFind(PLANET);
+
+        planetRepository.deleteById(planet.getId());
+        Planet removedPlanet = testEntityManager.find(Planet.class, planet.getId());
+        assertThat(removedPlanet).isNull();
+    }
+
+    @Test
+    void deletePlanet_ByUnexistingId_DoesNotThrowAnyException() {
+        assertThatCode(() -> planetRepository.deleteById(0L)).doesNotThrowAnyException();
     }
 }
