@@ -1,6 +1,6 @@
 package com.vinifillos.tests.domain;
 
-import static com.vinifillos.common.PlanetConstants.*;
+import static com.vinifillos.tests.common.PlanetConstants.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

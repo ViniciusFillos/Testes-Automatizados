@@ -11,7 +11,7 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.List;
 import java.util.Optional;
 
-import static com.vinifillos.common.PlanetConstants.*;
+import static com.vinifillos.tests.common.PlanetConstants.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 
