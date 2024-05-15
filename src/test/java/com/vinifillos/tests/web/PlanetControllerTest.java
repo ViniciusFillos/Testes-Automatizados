@@ -3,13 +3,13 @@ package com.vinifillos.tests.web;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vinifillos.tests.domain.Planet;
 import com.vinifillos.tests.domain.PlanetService;
-import com.vinifillos.tests.web.PlanetController;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -17,14 +17,15 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.vinifillos.common.PlanetConstants.*;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @WebMvcTest(PlanetController.class)
 class PlanetControllerTest {
@@ -40,7 +41,6 @@ class PlanetControllerTest {
     @Test
     void createPlanet_WithValidData_returnCreated() throws Exception {
         when(planetService.create(PLANET)).thenReturn(PLANET);
-
         mockMvc.perform(post("/planets")
                         .content(objectMapper.writeValueAsString(PLANET))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -107,7 +107,6 @@ class PlanetControllerTest {
         mockMvc.perform(get("/planets"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
-
         mockMvc.perform(get("/planets?climate=arid&terrain=desert"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -121,5 +120,16 @@ class PlanetControllerTest {
         mockMvc.perform(get("/planets?=climate&terrain="))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    void deletePlanet_ByExistingId_DoesNotThrowAnyException() {
+        assertThatCode(() -> planetService.remove(0L)).doesNotThrowAnyException();
+    }
+
+    @Test
+    void deletePlanet_ByUnexistingId_ThrowsException() throws Exception {
+        mockMvc.perform(delete("//planets/0"))
+                .andExpect(status().isNotFound());
     }
 }
