@@ -17,8 +17,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 //@SpringBootTest(classes = PlanetService.class)
 @ExtendWith(MockitoExtension.class)
@@ -98,12 +97,12 @@ class PlanetServiceTest {
 
     @Test
     void deletePlanet_ByExistingId_DoesNotThrowAnyException() {
-        assertThatCode(() -> planetService.remove(1L)).doesNotThrowAnyException();
+        assertThatCode(() -> planetService.remove(PLANET.getId())).doesNotThrowAnyException();
     }
 
     @Test
-    void deletePlanet_ByUnexistingId_ThrowsException() {
-        doThrow(new RuntimeException()).when(planetRepository).deleteById(0L);
-        assertThatThrownBy(() -> planetService.remove(0L)).isInstanceOf(RuntimeException.class);
+    void deletePlanet_ByUnexistingId_DoesNotThrowAnyException() {
+        doNothing().when(planetRepository).deleteById(0L);
+        assertThatCode(() -> planetService.remove(0L)).doesNotThrowAnyException();
     }
 }

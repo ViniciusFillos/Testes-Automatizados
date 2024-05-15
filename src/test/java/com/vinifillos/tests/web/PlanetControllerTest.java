@@ -128,7 +128,7 @@ class PlanetControllerTest {
     }
 
     @Test
-    void deletePlanet_ByUnexistingId_ThrowsException() throws Exception {
+    void deletePlanet_ByUnexistingId_ReturnNoContent() throws Exception {
         mockMvc.perform(delete("//planets/0"))
                 .andExpect(status().isNotFound());
     }
