@@ -1,4 +1,4 @@
-package com.vinifillos.tests.domain;
+ package com.vinifillos.tests.domain;
 
 import java.util.List;
 import java.util.Optional;
