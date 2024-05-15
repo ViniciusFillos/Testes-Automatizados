@@ -9,6 +9,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import static com.vinifillos.tests.common.PlanetConstants.PLANET;
 
@@ -19,6 +20,7 @@ class PlanetIT {
     private TestRestTemplate restTemplate;
 
     @Test
+    @Sql(scripts = "/remove_planets.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
     void createPlanet_ReturnsCreated() {
         ResponseEntity<Planet> sut = restTemplate.postForEntity("/planets", PLANET, Planet.class);
 
